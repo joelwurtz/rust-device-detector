@@ -7,8 +7,8 @@ use std::io::BufReader;
 
 use rust_device_detector::client_hints::ClientHint;
 
-#[test]
-fn test_parser_browsers() -> Result<()> {
+#[tokio::test]
+async fn test_parser_browsers() -> Result<()> {
     let file = match File::open("tests/data/fixtures/parser/client/browser.yml") {
         Ok(f) => f,
         Err(_) => return Ok(()), // Skip test if file not found
@@ -21,7 +21,7 @@ fn test_parser_browsers() -> Result<()> {
     Ok(())
 }
 
-fn basic(idx: usize, value: &mut Value) -> Result<()> {
+async fn basic(idx: usize, value: &mut Value) -> Result<()> {
     let ua = value["user_agent"].as_str().expect("user_agent");
     let test_client = value["client"].as_mapping().expect("client");
     let dd = &utils::DD;
@@ -31,7 +31,7 @@ fn basic(idx: usize, value: &mut Value) -> Result<()> {
         .and_then(|headers| headers.as_mapping())
         .and_then(|headers| utils::client_hint_mock(headers).ok());
 
-    let dd_res = dd.parse_client_hints(ua, client_hints)?;
+    let dd_res = dd.parse_client_hints(ua, client_hints).await?;
 
     assert!(!dd_res.is_bot());
 
