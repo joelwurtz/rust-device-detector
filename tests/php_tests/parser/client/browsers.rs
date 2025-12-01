@@ -16,7 +16,7 @@ async fn test_parser_browsers() -> Result<()> {
     let mut cases: Value = serde_yaml::from_reader(BufReader::new(file))?;
     let cases = cases.as_sequence_mut().expect("sequence");
     for (i, case) in cases.into_iter().enumerate() {
-        basic(i + 1, case).expect("basic test");
+        basic(i + 1, case).await.expect("basic test");
     }
     Ok(())
 }

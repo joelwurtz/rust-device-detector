@@ -24,8 +24,8 @@ fn test_form_factors_parsing() -> Result<()> {
     Ok(())
 }
 
-#[test]
-fn test_form_factors_device_detection() -> Result<()> {
+#[tokio::test]
+async fn test_form_factors_device_detection() -> Result<()> {
     // Test that FormFactors correctly detects device type
     let detector = DeviceDetector::new();
     
@@ -33,7 +33,7 @@ fn test_form_factors_device_detection() -> Result<()> {
         ("sec-ch-ua-form-factors".to_string(), r#""Desktop""#.to_string()),
     ];
     
-    let result = detector.parse("", Some(headers))?;
+    let result = detector.parse("", Some(headers)).await?;
     
     let device_type: Option<&str> = result
         .get_known_device()
